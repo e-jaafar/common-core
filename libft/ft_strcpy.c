@@ -6,7 +6,7 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 12:12:11 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/10 12:12:31 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/04/12 17:12:06 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ char	*ft_strcpy(char *dest, char *src)
 	dest[i] = '\0';
 	return (dest);
 }
+	
 /*#include <stdio.h>
 #include <string.h>
 
