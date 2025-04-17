@@ -1,39 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 23:35:55 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 17:51:15 by jael-m-r         ###   ########.fr       */
+/*   Created: 2025/04/16 13:00:43 by jael-m-r          #+#    #+#             */
+/*   Updated: 2025/04/16 13:03:15 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
+/*
+** Alloue et retourne un nouvel élément
+** La variable 'content' est initialisée avec la valeur de 'content'.
+** La variable 'next' est initialisée à NULL.
+*/
+
+t_list	*ft_lstnew(void const *content)
 {
-	size_t	i;
+	t_list	*new;
 
-	if (!dst && !src)
+	new = (t_list *)malloc(sizeof(t_list));
+	if (!new)
+	{
 		return (NULL);
-	if (dst > src)
-	{
-		while (len > 0)
-		{
-			len--;
-			((unsigned char *)dst)[len] = ((unsigned char *)src)[len];
-		}
 	}
-	else
-	{
-		i = 0;
-		while (i < len)
-		{
-			((unsigned char *)dst)[i] = ((unsigned char *)src)[i];
-			i++;
-		}
-	}
-	return (dst);
+	new->content = (void *)content;
+	new->next = NULL;
+	return (new);
 }

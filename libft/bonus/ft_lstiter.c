@@ -1,39 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*   ft_lstiter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 23:35:55 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 17:51:15 by jael-m-r         ###   ########.fr       */
+/*   Created: 2025/04/16 13:00:32 by jael-m-r          #+#    #+#             */
+/*   Updated: 2025/04/16 13:02:23 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
+/*
+** Parcourt la liste 'lst' et applique 'f' au contenu de chaque élément.
+*/
+
+void	ft_lstiter(t_list *lst, void (*f)(void *))
 {
-	size_t	i;
-
-	if (!dst && !src)
-		return (NULL);
-	if (dst > src)
+	if (!f || !lst)
+		return ;
+	while (lst)
 	{
-		while (len > 0)
-		{
-			len--;
-			((unsigned char *)dst)[len] = ((unsigned char *)src)[len];
-		}
+		f(lst->content);
+		lst = lst->next;
 	}
-	else
-	{
-		i = 0;
-		while (i < len)
-		{
-			((unsigned char *)dst)[i] = ((unsigned char *)src)[i];
-			i++;
-		}
-	}
-	return (dst);
 }

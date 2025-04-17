@@ -6,19 +6,19 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 12:12:51 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/10 12:12:53 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:48:21 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_strlen(char *str)
+#include "libft.h"
+
+size_t	ft_strlen(const char *s)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	while (str[i] != '\0')
-	{
+	while (s[i])
 		i++;
-	}
 	return (i);
 }
 

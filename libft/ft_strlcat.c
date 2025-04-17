@@ -6,29 +6,39 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/10 12:14:30 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/10 12:57:03 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/04/16 16:48:39 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-unsigned int	ft_strlcat(char *dest, char *src, unsigned int size)
-{
-	unsigned int	i;
-	unsigned int	j;
+#include "libft.h"
 
+/*
+** Concatenate strings with the same input parameters and output result.
+** Designed to be safer.
+** LIBC FUNCTION.
+*/
+
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+	size_t	dst_len;
+	size_t	src_len;
+
+	src_len = ft_strlen(src);
+	if (!dstsize)
+		return (src_len);
+	dst_len = ft_strlen(dst);
+	if (dstsize <= dst_len)
+		return (dstsize + src_len);
 	i = 0;
-	j = 0;
-	while (dest[i] != '\0')
-		i++;
-	while (src[j] != '\0' && i < size - 1)
+	while (src[i] && dst_len + i < dstsize - 1)
 	{
-		dest[i] = src[j];
-		j++;
+		dst[dst_len + i] = src[i];
 		i++;
 	}
-	dest[i] = '\0';
-	return (i + j);
+	dst[dst_len + i] = '\0';
+	return (dst_len + src_len);
 }
-
 /*#include <stdio.h>
 #include <string.h>
 

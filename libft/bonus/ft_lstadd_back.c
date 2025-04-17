@@ -1,39 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/13 23:35:55 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 17:51:15 by jael-m-r         ###   ########.fr       */
+/*   Created: 2025/04/16 12:59:56 by jael-m-r          #+#    #+#             */
+/*   Updated: 2025/04/16 17:54:33 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../libft.h"
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
+/*
+** Adds the element 'new' at the end of the list.
+*/
+
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	size_t	i;
+	t_list	*last;
 
-	if (!dst && !src)
-		return (NULL);
-	if (dst > src)
+	if (!lst)
+		return ;
+	if (!*lst)
 	{
-		while (len > 0)
-		{
-			len--;
-			((unsigned char *)dst)[len] = ((unsigned char *)src)[len];
-		}
+		*lst = new;
+		return ;
 	}
-	else
-	{
-		i = 0;
-		while (i < len)
-		{
-			((unsigned char *)dst)[i] = ((unsigned char *)src)[i];
-			i++;
-		}
-	}
-	return (dst);
+	last = *lst;
+	while (last->next)
+		last = last->next;
+	last->next = new;
 }
