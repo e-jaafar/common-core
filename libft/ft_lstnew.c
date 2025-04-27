@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstnew.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jael-m-r <jael-m-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 13:00:43 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 13:03:15 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:29:13 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 /*
 ** Alloue et retourne un nouvel élément
@@ -18,7 +18,7 @@
 ** La variable 'next' est initialisée à NULL.
 */
 
-t_list	*ft_lstnew(void const *content)
+t_list	*ft_lstnew(void *content)
 {
 	t_list	*new;
 
@@ -27,7 +27,7 @@ t_list	*ft_lstnew(void const *content)
 	{
 		return (NULL);
 	}
-	new->content = (void *)content;
+	new->content = content;
 	new->next = NULL;
 	return (new);
 }

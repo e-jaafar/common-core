@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jael-m-r <jael-m-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 13:00:40 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/17 13:32:12 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:29:09 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 static int	process_node(t_list **new_list, t_list *lst,
 			void *(*f)(void *), void (*del)(void *))

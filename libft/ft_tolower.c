@@ -18,3 +18,10 @@ int	ft_tolower(int c)
 		return (c + 'a' - 'A');
 	return (c);
 }
+
+/*#include <stdio.h>
+
+void	main()
+{
+	printf("test %d", ft_tolower(90));
+}*/

@@ -24,3 +24,14 @@ void	*ft_memset(void *b, int c, size_t len)
 	}
 	return (b);
 }
+/*#include <stdlib.h>
+#include <stdio.h>
+
+void	main()
+{
+	void	*str;
+	str = malloc(sizeof(char)* 6);
+
+	ft_memset(str, 65, 2);
+	printf("test %s", (char *)str);
+}*/

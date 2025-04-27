@@ -1,28 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstiter.c                                       :+:      :+:    :+:   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jael-m-r <jael-m-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/16 13:00:32 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 13:02:23 by jael-m-r         ###   ########.fr       */
+/*   Created: 2025/04/16 13:00:45 by jael-m-r          #+#    #+#             */
+/*   Updated: 2025/04/19 15:29:19 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 /*
-** Parcourt la liste 'lst' et applique 'f' au contenu de chaque élément.
+** compte le nombre d'element dans une liste
 */
 
-void	ft_lstiter(t_list *lst, void (*f)(void *))
+int	ft_lstsize(t_list *lst)
 {
-	if (!f || !lst)
-		return ;
+	int	i;
+
+	if (!lst)
+		return (0);
+	i = 0;
 	while (lst)
 	{
-		f(lst->content);
+		i++;
 		lst = lst->next;
 	}
+	return (i);
 }

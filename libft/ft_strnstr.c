@@ -42,3 +42,12 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	}
 	return (NULL);
 }
+/*#include <stdio.h>
+
+void	main()
+{
+	char *texte = "Ceci est une chaîne de test";
+	char *mot = "chaîne";
+	
+	printf("Mot trouvé : %s", ft_strnstr(texte, mot, 50));
+}*/

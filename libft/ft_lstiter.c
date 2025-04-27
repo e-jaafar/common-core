@@ -1,27 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
+/*   ft_lstiter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jael-m-r <jael-m-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/16 13:00:20 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 13:01:05 by jael-m-r         ###   ########.fr       */
+/*   Created: 2025/04/16 13:00:32 by jael-m-r          #+#    #+#             */
+/*   Updated: 2025/04/19 15:29:00 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 /*
-** Adds the element new at the beginning of the list.
-** NON STANDARD FUNCTION.
+** Parcourt la liste 'lst' et applique 'f' au contenu de chaque élément.
 */
 
-void	ft_lstadd_front(t_list **alst, t_list *new)
+void	ft_lstiter(t_list *lst, void (*f)(void *))
 {
-	if (!alst || !new)
+	if (!f || !lst)
 		return ;
-	if (*alst)
-		new->next = *alst;
-	*alst = new;
+	while (lst)
+	{
+		f(lst->content);
+		lst = lst->next;
+	}
 }

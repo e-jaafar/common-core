@@ -1,32 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
+/*   By: jael-m-r <jael-m-r@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/16 13:00:45 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/04/16 13:03:41 by jael-m-r         ###   ########.fr       */
+/*   Created: 2025/04/16 12:59:56 by jael-m-r          #+#    #+#             */
+/*   Updated: 2025/04/19 15:28:47 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft.h"
+#include "libft.h"
 
 /*
-** compte le nombre d'element dans une liste
+** Adds the element 'new' at the end of the list.
 */
 
-int	ft_lstsize(t_list *lst)
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	int	i;
+	t_list	*last;
 
 	if (!lst)
-		return (0);
-	i = 0;
-	while (lst)
+		return ;
+	if (!*lst)
 	{
-		i++;
-		lst = lst->next;
+		*lst = new;
+		return ;
 	}
-	return (i);
+	last = *lst;
+	while (last->next)
+		last = last->next;
+	last->next = new;
 }

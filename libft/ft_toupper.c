@@ -18,3 +18,10 @@ int	ft_toupper(int c)
 		c -= 32;
 	return (c);
 }
+
+/*#include <stdio.h>
+
+void	main()
+{
+	printf("test : %d", ft_toupper(122));
+}*/
