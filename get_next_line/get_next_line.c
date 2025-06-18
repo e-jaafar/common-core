@@ -6,7 +6,7 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:26:39 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/06/19 00:31:03 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/06/19 00:44:54 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,73 +14,62 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-char	*ft_get_line(int fd, char *line)
+static int	ft_get_line_read(int fd, char **tmp_line)
 {
 	char	*buffer;
 	ssize_t	read_bytes;
-	char	*tmp_line;
 	char	*new_tmp_line;
 
-	// Si line est NULL initialement (premier appel pour ce fd), ft_strchr(NULL, ...) est géré par ft_strchr.
-	// Si line n'est pas NULL, il contient le reste d'une lecture précédente.
-	tmp_line = line;
-
-	// Allouer le buffer de lecture une seule fois.
 	buffer = (char *)malloc(BUFFER_SIZE + 1);
 	if (!buffer)
-		return (NULL); // Erreur d'allocation, l'appelant doit gérer 'line' s'il n'est pas NULL.
-
+		return (-1);
 	read_bytes = 1;
-	while (!ft_strchr(tmp_line, '\n') && read_bytes > 0)
+	while (!ft_strchr(*tmp_line, '\n') && read_bytes > 0)
 	{
 		read_bytes = read(fd, buffer, BUFFER_SIZE);
 		if (read_bytes == -1)
 		{
 			free(buffer);
-			// Ne pas libérer tmp_line ici. Si tmp_line est 'line' (original line_storage),
-			// il sera géré par l'appelant. Si tmp_line est une allocation interne,
-			// il devrait être libéré, mais la structure actuelle le retourne ou le remplace.
-			// Laisser l'appelant (get_next_line) gérer la libération de line_storage[fd] en cas d'erreur.
-			// Cependant, si tmp_line est une chaîne allouée par un ft_strjoin précédent, elle fuit ici.
-			// Modification: si tmp_line != line, c'est une alloc interne, il faut la free.
-			if (tmp_line != line)
-				free(tmp_line);
-			return (NULL); // Indique une erreur de lecture.
+			return (-1);
 		}
-		if (read_bytes == 0) // EOF atteint.
+		if (read_bytes == 0)
 			break;
 		buffer[read_bytes] = '\0';
-		new_tmp_line = ft_strjoin(tmp_line, buffer);
+		new_tmp_line = ft_strjoin(*tmp_line, buffer);
 		if (!new_tmp_line)
 		{
 			free(buffer);
-			if (tmp_line != line) // Libérer seulement si tmp_line a été alloué par un ft_strjoin précédent.
-				free(tmp_line);
-			return (NULL); // Erreur d'allocation de ft_strjoin.
+			return (-1);
 		}
-		if (tmp_line != line && tmp_line != NULL) // Si tmp_line était une chaîne allouée précédemment (et non l'original 'line' ou NULL)
-			free(tmp_line);
-		tmp_line = new_tmp_line;
+		if (*tmp_line && *tmp_line != new_tmp_line)
+			free(*tmp_line);
+		*tmp_line = new_tmp_line;
 	}
 	free(buffer);
-	// Si read_bytes == 0 (EOF) et tmp_line est vide ou NULL (ex: fichier vide),
-	// retourner NULL pour que get_next_line sache qu\'il n\'y a plus rien.
+	return (read_bytes);
+}
+
+char	*ft_get_line(int fd, char *line)
+{
+	char	*tmp_line;
+	int		read_bytes;
+
+	tmp_line = line;
+	read_bytes = ft_get_line_read(fd, &tmp_line);
+	if (read_bytes == -1)
+	{
+		if (tmp_line != line && tmp_line != NULL)
+			free(tmp_line);
+		return (NULL);
+	}
 	if (read_bytes == 0 && (!tmp_line || *tmp_line == '\0'))
 	{
-		if (tmp_line != NULL && tmp_line != line) // Si tmp_line a été alloué et est vide
+		if (tmp_line != NULL && tmp_line != line)
 			free(tmp_line);
-		else if (tmp_line == line && tmp_line != NULL && *tmp_line == '\0') // Si l\'original \'line\' était vide
-		{
-			// Ne pas le libérer, le retourner tel quel pour que l\'appelant le gère.
-			// Ou retourner NULL si c\'est la convention pour "rien à traiter".
-			// Pour être cohérent, si rien n\'est produit, retourner NULL.
-			// Mais si \'line\' était "" et EOF, on retourne ""
-		}
-		// Si tmp_line est NULL (fichier vide initial) ou tmp_line est une chaîne vide allouée, retourner NULL.
 		if (tmp_line == NULL || (tmp_line != line && *tmp_line == '\0'))
 			return (NULL);
 	}
-	return (tmp_line); // Retourne la ligne accumulée (peut être l\'original \'line\' ou une nouvelle).
+	return (tmp_line);
 }
 
 char	*new_line(char *line)

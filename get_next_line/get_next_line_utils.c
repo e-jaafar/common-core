@@ -6,7 +6,7 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:27:53 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/06/19 00:26:42 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/06/19 00:44:54 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,17 @@ char	*ft_strchr(char *s, int c)
 	return (0);
 }
 
+char	*ft_strjoin_alloc_empty(void)
+{
+	char	*empty;
+
+	empty = (char *)malloc(1 * sizeof(char));
+	if (!empty)
+		return (NULL);
+	empty[0] = '\0';
+	return (empty);
+}
+
 char	*ft_strjoin(char *s1, char *buff)
 {
 	size_t	i;
@@ -50,23 +61,18 @@ char	*ft_strjoin(char *s1, char *buff)
 	char	*s1_alias;
 	size_t	s1_len;
 
-	if (!buff) // Si buff est NULL, on ne peut rien joindre.
-		return (NULL); // Ou retourner une copie de s1 ? Pour GNL, buff vient de read.
+	if (!buff)
+		return (NULL);
 	s1_alias = s1;
 	if (!s1_alias)
-	{
-		// Allouer une chaîne vide si s1 est NULL pour simplifier la logique.
-		// Cette mémoire sera utilisée temporairement et ne représente pas s1 lui-même.
-		s1_alias = (char *)malloc(1 * sizeof(char));
-		if (!s1_alias)
-			return (NULL);
-		s1_alias[0] = '\0';
-	}
+		s1_alias = ft_strjoin_alloc_empty();
+	if (!s1_alias)
+		return (NULL);
 	s1_len = ft_strlen(s1_alias);
 	str = (char *)malloc(sizeof(char) * (s1_len + ft_strlen(buff) + 1));
 	if (!str)
 	{
-		if (!s1) // Si s1 original était NULL, s1_alias a été alloué
+		if (!s1)
 			free(s1_alias);
 		return (NULL);
 	}
@@ -80,8 +86,7 @@ char	*ft_strjoin(char *s1, char *buff)
 	while (buff[j])
 		str[i++] = buff[j++];
 	str[i] = '\0';
-	if (!s1) // Si s1 original était NULL, s1_alias a été alloué et doit être libéré.
+	if (!s1)
 		free(s1_alias);
-	// Ne PAS libérer s1 (l'argument original) ici.
 	return (str);
 }
