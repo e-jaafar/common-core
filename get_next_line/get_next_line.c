@@ -6,7 +6,7 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:26:39 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/06/20 18:32:03 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 19:08:44 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,100 +14,84 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static char	*local_strjoin(char *s1, char *s2)
+static void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	size_t	len1;
-	size_t	len2;
-	char	*result;
-	size_t	i;
-	size_t	j;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	result = (char *)malloc(len1 + len2 + 1);
-	if (!result)
+	if (!dest && !src)
 		return (NULL);
-	i = 0;
-	while (i < len1)
-	{
-		result[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (j < len2)
-	{
-		result[i + j] = s2[j];
-		j++;
-	}
-	result[i + j] = '\0';
-	return (result);
+	d = (unsigned char *)dest;
+	s = (const unsigned char *)src;
+	while (n--)
+		*d++ = *s++;
+	return (dest);
 }
 
-static ssize_t	append_from_read(int fd, char **tmp_line, char *buffer)
+static char	*ft_realloc_and_copy(char *original, size_t old_size,
+		size_t new_size)
 {
-	ssize_t	read_bytes;
-	char	*new_tmp_line;
+	char	*new_ptr;
 
-	read_bytes = read(fd, buffer, BUFFER_SIZE);
-	if (read_bytes <= 0)
-		return (read_bytes);
-	buffer[read_bytes] = '\0';
-	new_tmp_line = local_strjoin(*tmp_line, buffer);
-	if (!new_tmp_line)
+	new_ptr = (char *)malloc(new_size);
+	if (!new_ptr)
 	{
-		if (*tmp_line)
-			free(*tmp_line);
-		*tmp_line = NULL;
-		return (-1);
+		if (original)
+			free(original);
+		return (NULL);
 	}
-	if (*tmp_line && *tmp_line != new_tmp_line)
-		free(*tmp_line);
-	*tmp_line = new_tmp_line;
-	return (read_bytes);
-}
-
-static int	ft_get_line_read(int fd, char **tmp_line)
-{
-	char	*buffer;
-	ssize_t	read_bytes;
-
-	buffer = (char *)malloc(BUFFER_SIZE + 1);
-	if (!buffer)
-		return (-1);
-	read_bytes = 1;
-	while (!ft_strchr(*tmp_line, '\n') && read_bytes > 0)
+	if (original)
 	{
-		read_bytes = append_from_read(fd, tmp_line, buffer);
-		if (read_bytes == -1)
-		{
-			free(buffer);
-			return (-1);
-		}
+		ft_memcpy(new_ptr, original, old_size);
+		free(original);
 	}
-	free(buffer);
-	return (read_bytes);
+	return (new_ptr);
 }
 
 char	*ft_get_line(int fd, char *line)
 {
-	char	*tmp_line;
-	int		read_bytes;
+	char		buffer[BUFFER_SIZE];
+	ssize_t		bytes_read;
+	size_t		line_len;
+	size_t		buffer_cap;
 
-	tmp_line = line;
-	read_bytes = ft_get_line_read(fd, &tmp_line);
-	if (read_bytes == -1)
+	line_len = 0;
+	buffer_cap = 0;
+	if (line)
 	{
-		if (tmp_line)
-			free(tmp_line);
+		line_len = ft_strlen(line);
+		buffer_cap = line_len;
+	}
+	bytes_read = 1;
+	while (bytes_read > 0 && !ft_strchr(line, '\n'))
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read <= 0)
+			break ;
+		if (line_len + bytes_read > buffer_cap)
+		{
+			buffer_cap = (line_len + bytes_read) * 2;
+			line = ft_realloc_and_copy(line, line_len, buffer_cap);
+			if (!line)
+				return (NULL);
+		}
+		ft_memcpy(line + line_len, buffer, bytes_read);
+		line_len += bytes_read;
+	}
+	if (bytes_read == -1 || (bytes_read == 0 && line_len == 0))
+	{
+		if (line)
+			free(line);
 		return (NULL);
 	}
-	if (read_bytes == 0 && (!tmp_line || *tmp_line == '\0'))
+	if (line_len > 0)
 	{
-		if (tmp_line)
-			free(tmp_line);
-		return (NULL);
+		line = ft_realloc_and_copy(line, line_len, line_len + 1);
+		if (!line)
+			return (NULL);
+		line[line_len] = '\0';
 	}
-	return (tmp_line);
+	return (line);
 }
 
 char	*get_next_line(int fd)
