@@ -6,27 +6,13 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:26:39 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/06/20 19:08:44 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/06/20 19:45:17 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdlib.h>
 #include <unistd.h>
-
-static void	*ft_memcpy(void *dest, const void *src, size_t n)
-{
-	unsigned char		*d;
-	const unsigned char	*s;
-
-	if (!dest && !src)
-		return (NULL);
-	d = (unsigned char *)dest;
-	s = (const unsigned char *)src;
-	while (n--)
-		*d++ = *s++;
-	return (dest);
-}
 
 static char	*ft_realloc_and_copy(char *original, size_t old_size,
 		size_t new_size)
@@ -35,11 +21,7 @@ static char	*ft_realloc_and_copy(char *original, size_t old_size,
 
 	new_ptr = (char *)malloc(new_size);
 	if (!new_ptr)
-	{
-		if (original)
-			free(original);
 		return (NULL);
-	}
 	if (original)
 	{
 		ft_memcpy(new_ptr, original, old_size);
@@ -48,50 +30,78 @@ static char	*ft_realloc_and_copy(char *original, size_t old_size,
 	return (new_ptr);
 }
 
-char	*ft_get_line(int fd, char *line)
+static char	*ft_read_and_grow(int fd, char *line, t_read_spec *spec)
 {
-	char		buffer[BUFFER_SIZE];
-	ssize_t		bytes_read;
-	size_t		line_len;
-	size_t		buffer_cap;
+	char	buffer[BUFFER_SIZE];
+	char	*temp;
 
-	line_len = 0;
-	buffer_cap = 0;
-	if (line)
+	spec->bytes = read(fd, buffer, BUFFER_SIZE);
+	if (spec->bytes <= 0)
+		return (line);
+	if (spec->len + spec->bytes + 1 > spec->cap)
 	{
-		line_len = ft_strlen(line);
-		buffer_cap = line_len;
-	}
-	bytes_read = 1;
-	while (bytes_read > 0 && !ft_strchr(line, '\n'))
-	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read <= 0)
-			break ;
-		if (line_len + bytes_read > buffer_cap)
+		spec->cap = (spec->len + spec->bytes) * 2;
+		temp = ft_realloc_and_copy(line, spec->len, spec->cap);
+		if (!temp)
 		{
-			buffer_cap = (line_len + bytes_read) * 2;
-			line = ft_realloc_and_copy(line, line_len, buffer_cap);
-			if (!line)
-				return (NULL);
+			free(line);
+			return (NULL);
 		}
-		ft_memcpy(line + line_len, buffer, bytes_read);
-		line_len += bytes_read;
+		line = temp;
 	}
-	if (bytes_read == -1 || (bytes_read == 0 && line_len == 0))
+	ft_memcpy(line + spec->len, buffer, spec->bytes);
+	spec->len += spec->bytes;
+	line[spec->len] = '\0';
+	return (line);
+}
+
+static char	*finalize_line(char *line, ssize_t bytes_read)
+{
+	char	*temp;
+	size_t	line_len;
+
+	if (bytes_read == -1)
 	{
 		if (line)
 			free(line);
 		return (NULL);
 	}
-	if (line_len > 0)
+	if (!line || !*line)
 	{
-		line = ft_realloc_and_copy(line, line_len, line_len + 1);
+		if (line)
+			free(line);
+		return (NULL);
+	}
+	line_len = ft_strlen(line);
+	temp = ft_realloc_and_copy(line, line_len, line_len + 1);
+	if (!temp)
+	{
+		free(line);
+		return (NULL);
+	}
+	temp[line_len] = '\0';
+	return (temp);
+}
+
+char	*ft_get_line(int fd, char *line)
+{
+	t_read_spec	spec;
+
+	spec.len = 0;
+	spec.cap = 0;
+	if (line)
+	{
+		spec.len = ft_strlen(line);
+		spec.cap = spec.len;
+	}
+	spec.bytes = 1;
+	while (spec.bytes > 0 && (!line || !ft_strchr(line, '\n')))
+	{
+		line = ft_read_and_grow(fd, line, &spec);
 		if (!line)
 			return (NULL);
-		line[line_len] = '\0';
 	}
-	return (line);
+	return (finalize_line(line, spec.bytes));
 }
 
 char	*get_next_line(int fd)
