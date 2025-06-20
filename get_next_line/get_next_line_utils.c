@@ -6,7 +6,7 @@
 /*   By: jael-m-r <jael-m-r@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 22:27:53 by jael-m-r          #+#    #+#             */
-/*   Updated: 2025/06/19 00:44:54 by jael-m-r         ###   ########.fr       */
+/*   Updated: 2025/06/19 19:13:19 by jael-m-r         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,51 +42,67 @@ char	*ft_strchr(char *s, int c)
 	return (0);
 }
 
-char	*ft_strjoin_alloc_empty(void)
+static void	local_strcpy(char *dst, char *src)
 {
-	char	*empty;
+	int	i;
 
-	empty = (char *)malloc(1 * sizeof(char));
-	if (!empty)
-		return (NULL);
-	empty[0] = '\0';
-	return (empty);
-}
-
-char	*ft_strjoin(char *s1, char *buff)
-{
-	size_t	i;
-	size_t	j;
-	char	*str;
-	char	*s1_alias;
-	size_t	s1_len;
-
-	if (!buff)
-		return (NULL);
-	s1_alias = s1;
-	if (!s1_alias)
-		s1_alias = ft_strjoin_alloc_empty();
-	if (!s1_alias)
-		return (NULL);
-	s1_len = ft_strlen(s1_alias);
-	str = (char *)malloc(sizeof(char) * (s1_len + ft_strlen(buff) + 1));
-	if (!str)
-	{
-		if (!s1)
-			free(s1_alias);
-		return (NULL);
-	}
 	i = 0;
-	j = 0;
-	while (s1_alias[i])
+	while (src[i])
 	{
-		str[i] = s1_alias[i];
+		dst[i] = src[i];
 		i++;
 	}
-	while (buff[j])
-		str[i++] = buff[j++];
-	str[i] = '\0';
-	if (!s1)
-		free(s1_alias);
+	dst[i] = '\0';
+}
+
+char	*new_line(char *line)
+{
+	int		i;
+	char	*str;
+
+	i = 0;
+	if (!line)
+		return (NULL);
+	while (line[i] && line[i] != '\n')
+		i++;
+	if (!line[i] || !line[i + 1])
+	{
+		free(line);
+		return (NULL);
+	}
+	str = (char *)malloc(sizeof(char) * (ft_strlen(line + i + 1) + 1));
+	if (!str)
+	{
+		free(line);
+		return (NULL);
+	}
+	local_strcpy(str, line + i + 1);
+	free(line);
+	return (str);
+}
+
+char	*ft_get_next_line(char *line)
+{
+	int		i;
+	int		j;
+	char	*str;
+
+	i = 0;
+	if (!line || !line[i])
+		return (NULL);
+	while (line[i] && line[i] != '\n')
+		i++;
+	if (line[i] == '\n')
+		i++;
+	str = (char *)malloc(sizeof(char) * (i + 1));
+	if (!str)
+		return (NULL);
+	j = 0;
+	while (j < i)
+	{
+		str[j] = line[j];
+		j++;
+	}
+	str[j] = '\0';
 	return (str);
 }
